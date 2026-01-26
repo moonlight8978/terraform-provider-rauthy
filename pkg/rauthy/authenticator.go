@@ -1,6 +1,9 @@
 package rauthy
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 type Authenticator interface {
 	Authenticate(req *http.Request) error
@@ -17,6 +20,6 @@ func NewApiKeyAuthenticator(apiKey string) *ApiKeyAuthenticator {
 }
 
 func (a *ApiKeyAuthenticator) Authenticate(req *http.Request) error {
-	req.Header.Set("X-API-Key", a.apiKey)
+	req.Header.Set("Authorization", fmt.Sprintf("API-Key %s", a.apiKey))
 	return nil
 }

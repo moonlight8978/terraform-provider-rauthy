@@ -5,8 +5,6 @@ package provider
 
 import (
 	"context"
-	"crypto/tls"
-	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -17,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/passwordpolicy"
+	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
 
 // Ensure RauthyProvider satisfies various provider interfaces.
@@ -65,32 +64,29 @@ func (p *RauthyProvider) Schema(ctx context.Context, req provider.SchemaRequest,
 }
 
 func (p *RauthyProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	var data RauthyProviderModel
+	var model RauthyProviderModel
 
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &model)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	if data.Endpoint.IsNull() {
-		resp.Diagnostics.AddError("Missing endpoint", "Endpoint is required")
-		return
-	}
+	// if model.Endpoint.IsNull() {
+	// 	resp.Diagnostics.AddError("Missing endpoint", "Endpoint is required")
+	// 	return
+	// }
 
-	if data.APIKey.IsNull() {
-		resp.Diagnostics.AddError("Missing API key", "API key is required")
-		return
-	}
+	// if model.APIKey.IsNull() {
+	// 	resp.Diagnostics.AddError("Missing API key", "API key is required")
+	// 	return
+	// }
 
-	client := http.DefaultClient
-	if data.Insecure.ValueBool() {
-		client.Transport = &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	}
+	client := rauthy.NewClient(
+		model.Endpoint.ValueString(),
+		model.Insecure.ValueBool(),
+		rauthy.NewApiKeyAuthenticator(model.APIKey.ValueString()),
+	)
 
 	resp.DataSourceData = client
 	resp.ResourceData = client

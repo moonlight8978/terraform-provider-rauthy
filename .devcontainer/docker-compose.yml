@@ -22,6 +22,7 @@ services:
     image: mcr.microsoft.com/devcontainers/go:2.0.6-1.25-bookworm
     command: sleep infinity
     tty: true
+    working_dir: /workspace
     volumes:
       - ..:/workspace:cached
 

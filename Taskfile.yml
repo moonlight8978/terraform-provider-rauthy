@@ -1,0 +1,9 @@
+version: 3
+tasks:
+  test:acc:
+    env:
+      TF_ACC: "1"
+    cmd: go test -v ./...
+
+  test:pkg:
+    cmd: go test -v ./pkg/...
