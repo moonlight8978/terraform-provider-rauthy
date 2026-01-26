@@ -20,7 +20,10 @@ services:
 
   app:
     image: mcr.microsoft.com/devcontainers/go:2.0.6-1.25-bookworm
-    restart: unless-stopped
+    command: sleep infinity
+    tty: true
+    volumes:
+      - ..:/workspace:cached
 
 volumes:
   rauthy-data:

@@ -1,4 +1,4 @@
-package internal
+package provider
 
 import "github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 
