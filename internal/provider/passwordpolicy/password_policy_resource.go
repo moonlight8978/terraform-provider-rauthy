@@ -6,14 +6,13 @@ package passwordpolicy
 import (
 	"context"
 	"fmt"
-	"net/http"
 
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -26,7 +25,7 @@ func NewPasswordPolicyResource() resource.Resource {
 
 // ExampleResource defines the resource implementation.
 type PasswordPolicyResource struct {
-	client *http.Client
+	client *rauthy.Client
 }
 
 // ExampleResourceModel describes the resource data model.
@@ -42,66 +41,68 @@ type PasswordPolicyResourceModel struct {
 }
 
 func (r *PasswordPolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_example"
+	resp.TypeName = req.ProviderTypeName + "_password_policy"
 }
 
 func (r *PasswordPolicyResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "Example resource",
+		MarkdownDescription: "Password policy resource",
 
 		Attributes: map[string]schema.Attribute{
 			"include_digits": schema.Int64Attribute{
 				MarkdownDescription: "Number of digits required in password",
 				Optional:            true,
 				Default:             int64default.StaticInt64(1),
+				Computed:            true,
 			},
 			"include_lower_case": schema.Int64Attribute{
 				MarkdownDescription: "Number of lowercase letters required in password",
 				Optional:            true,
 				Default:             int64default.StaticInt64(1),
+				Computed:            true,
 			},
 			"include_upper_case": schema.Int64Attribute{
 				MarkdownDescription: "Number of uppercase letters required in password",
 				Optional:            true,
 				Default:             int64default.StaticInt64(1),
+				Computed:            true,
 			},
 			"include_special": schema.Int64Attribute{
 				MarkdownDescription: "Number of special characters required in password",
 				Optional:            true,
 				Default:             int64default.StaticInt64(0),
+				Computed:            true,
 			},
 			"length_max": schema.Int64Attribute{
 				MarkdownDescription: "Maximum length of password",
 				Required:            true,
-				Default:             int64default.StaticInt64(128),
 			},
 			"length_min": schema.Int64Attribute{
 				MarkdownDescription: "Minimum length of password",
 				Required:            true,
-				Default:             int64default.StaticInt64(14),
 			},
 			"not_recently_used": schema.Int64Attribute{
 				MarkdownDescription: "Number of previous passwords that cannot be reused",
 				Optional:            true,
 				Default:             int64default.StaticInt64(3),
+				Computed:            true,
 			},
 			"valid_days": schema.Int64Attribute{
 				MarkdownDescription: "Number of days before password expires",
 				Optional:            true,
 				Default:             int64default.StaticInt64(180),
+				Computed:            true,
 			},
 		},
 	}
 }
 
 func (r *PasswordPolicyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
 	}
 
-	client, ok := req.ProviderData.(*http.Client)
+	client, ok := req.ProviderData.(*rauthy.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
@@ -216,5 +217,5 @@ func (r *PasswordPolicyResource) Delete(ctx context.Context, req resource.Delete
 }
 
 func (r *PasswordPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	panic("not supported")
 }
