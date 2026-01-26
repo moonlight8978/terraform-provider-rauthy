@@ -1,0 +1,7 @@
+{
+  "name": "terraform-provider-rauthy",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": ".",
+  "shutdownAction": "stopCompose"
+}

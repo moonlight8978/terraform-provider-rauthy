@@ -1,0 +1,26 @@
+services:
+  rauthy:
+    image: ghcr.io/sebadob/rauthy:0.34.1
+    restart: unless-stopped
+    ports:
+      - "8443:8443"
+      - "8080:8080"
+    environment:
+      LOCAL_TEST: "true"
+      SWAGGER_UI_ENABLE: "true"
+    volumes:
+      - rauthy-data:/app/data
+
+  mailcrab:
+    image: marlonb/mailcrab:latest
+    restart: unless-stopped
+    ports:
+      - "17025:1025"
+      - "17080:1080"
+
+  app:
+    image: mcr.microsoft.com/devcontainers/go:2.0.6-1.25-bookworm
+    restart: unless-stopped
+
+volumes:
+  rauthy-data:
