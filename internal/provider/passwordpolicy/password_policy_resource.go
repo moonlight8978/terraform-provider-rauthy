@@ -188,7 +188,7 @@ func (model *PasswordPolicyResourceModel) ToPayload() *rauthy.PasswordPolicy {
 		IncludeSpecial:   int(model.IncludeSpecial.ValueInt64()),
 		LengthMin:        int(model.LengthMin.ValueInt64()),
 		LengthMax:        int(model.LengthMax.ValueInt64()),
-		NotRecentlyUsed:  int(model.NotRecentlyUsed.ValueInt64()),
-		ValidDays:        int(model.ValidDays.ValueInt64()),
+		// NotRecentlyUsed:  int(model.NotRecentlyUsed.ValueInt64()),
+		ValidDays: int(model.ValidDays.ValueInt64()),
 	}
 }

@@ -5,6 +5,8 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -14,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/client"
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/passwordpolicy"
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
@@ -72,21 +75,16 @@ func (p *RauthyProvider) Configure(ctx context.Context, req provider.ConfigureRe
 		return
 	}
 
-	// if model.Endpoint.IsNull() {
-	// 	resp.Diagnostics.AddError("Missing endpoint", "Endpoint is required")
-	// 	return
-	// }
+	config := ProviderConfig{}
+	config.FromEnv()
+	config.Override(model)
 
-	// if model.APIKey.IsNull() {
-	// 	resp.Diagnostics.AddError("Missing API key", "API key is required")
-	// 	return
-	// }
+	if err := config.Validate(); err != nil {
+		resp.Diagnostics.AddError("Invalid provider configuration", err.Error())
+		return
+	}
 
-	client := rauthy.NewClient(
-		model.Endpoint.ValueString(),
-		model.Insecure.ValueBool(),
-		rauthy.NewApiKeyAuthenticator(model.APIKey.ValueString()),
-	)
+	client := rauthy.NewClient(config.Endpoint, config.Insecure, rauthy.NewApiKeyAuthenticator(config.APIKey))
 
 	resp.DataSourceData = client
 	resp.ResourceData = client
@@ -94,6 +92,7 @@ func (p *RauthyProvider) Configure(ctx context.Context, req provider.ConfigureRe
 
 func (p *RauthyProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		client.NewClientResource,
 		passwordpolicy.NewPasswordPolicyResource,
 	}
 }
@@ -128,4 +127,42 @@ func New(version string) func() provider.Provider {
 			version: version,
 		}
 	}
+}
+
+type ProviderConfig struct {
+	Endpoint string
+	APIKey   string
+	Insecure bool
+}
+
+func (c *ProviderConfig) FromEnv() {
+	c.Endpoint = os.Getenv("RAUTHY_ENDPOINT")
+	c.APIKey = os.Getenv("RAUTHY_API_KEY")
+	c.Insecure = os.Getenv("RAUTHY_INSECURE") == "true"
+}
+
+func (c *ProviderConfig) Override(model RauthyProviderModel) {
+	if !model.Endpoint.IsNull() {
+		c.Endpoint = model.Endpoint.ValueString()
+	}
+
+	if !model.APIKey.IsNull() {
+		c.APIKey = model.APIKey.ValueString()
+	}
+
+	if !model.Insecure.IsNull() {
+		c.Insecure = model.Insecure.ValueBool()
+	}
+}
+
+func (c *ProviderConfig) Validate() error {
+	if c.Endpoint == "" {
+		return fmt.Errorf("`endpoint` or `RAUTHY_ENDPOINT` is required")
+	}
+
+	if c.APIKey == "" {
+		return fmt.Errorf("api_key` or `RAUTHY_API_KEY` is required")
+	}
+
+	return nil
 }

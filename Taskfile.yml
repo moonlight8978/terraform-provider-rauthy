@@ -11,7 +11,11 @@ tasks:
   test:acc:
     env:
       TF_ACC: "1"
-    cmd: go test -v ./...
+    vars:
+      SCOPE: '{{ len .CLI_ARGS_LIST | eq 0 | ternary "./..." .CLI_ARGS }}'
+    cmd: go test -v {{.SCOPE}}
 
   test:pkg:
-    cmd: go test -v ./pkg/...
+    vars:
+      SCOPE: '{{ len .CLI_ARGS_LIST | eq 0 | ternary "./pkg/..." .CLI_ARGS }}'
+    cmd: go test -v {{.SCOPE}}

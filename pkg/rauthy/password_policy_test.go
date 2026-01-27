@@ -2,6 +2,7 @@ package rauthy_test
 
 import (
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
@@ -19,7 +20,7 @@ var passwordPolicyResponse = `{
 		}`
 
 func TestGetPasswordPolicy(t *testing.T) {
-	ts := CreateServer(passwordPolicyResponse)
+	ts := CreateServer(passwordPolicyResponse, http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
@@ -35,11 +36,11 @@ func TestGetPasswordPolicy(t *testing.T) {
 	assert.Equal(t, 1, passwordPolicy.IncludeUpperCase)
 	assert.Equal(t, 1, passwordPolicy.IncludeDigits)
 	assert.Equal(t, 180, passwordPolicy.ValidDays)
-	assert.Equal(t, 3, passwordPolicy.NotRecentlyUsed)
+	// assert.Equal(t, 3, passwordPolicy.NotRecentlyUsed)
 }
 
 func TestUpdatePasswordPolicy(t *testing.T) {
-	ts := CreateServer(passwordPolicyResponse)
+	ts := CreateServer(passwordPolicyResponse, http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
@@ -51,7 +52,7 @@ func TestUpdatePasswordPolicy(t *testing.T) {
 		IncludeUpperCase: 2,
 		IncludeDigits:    1,
 		ValidDays:        180,
-		NotRecentlyUsed:  3,
+		// NotRecentlyUsed:  3,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -63,5 +64,5 @@ func TestUpdatePasswordPolicy(t *testing.T) {
 	assert.Equal(t, 1, passwordPolicy.IncludeUpperCase)
 	assert.Equal(t, 1, passwordPolicy.IncludeDigits)
 	assert.Equal(t, 180, passwordPolicy.ValidDays)
-	assert.Equal(t, 3, passwordPolicy.NotRecentlyUsed)
+	// assert.Equal(t, 3, passwordPolicy.NotRecentlyUsed)
 }

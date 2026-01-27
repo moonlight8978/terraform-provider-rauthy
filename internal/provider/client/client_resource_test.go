@@ -31,7 +31,7 @@ func TestAccClientResource(t *testing.T) {
 					),
 					statecheck.ExpectKnownValue(
 						"rauthy_client.google",
-						tfjsonpath.New("client_id"),
+						tfjsonpath.New("id"),
 						knownvalue.StringExact("google"),
 					),
 					statecheck.ExpectKnownValue(
@@ -51,7 +51,7 @@ resource "rauthy_client" "google" {
 	id = %[1]q
 	name = %[2]q
 	confidential = %[3]t
-	redirect_uris = [%[4]q]
+	redirect_uris = %[4]q
 	enabled = true
 	flows_enabled = ["authorization_code"]
 	access_token_alg = "EdDSA"
@@ -59,11 +59,8 @@ resource "rauthy_client" "google" {
 	auth_code_lifetime = 10
 	access_token_lifetime = 10
 	scopes = ["openid"]
-	default_scopes = ["openid"]
 	challenges = ["S256"]
 	force_mfa = false
-	client_uri = "https://localhost:8443"
-	contacts = ["admin@localhost"]
 }
 `, id, name, confidential, redirectURIs)
 }

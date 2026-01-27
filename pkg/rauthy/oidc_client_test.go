@@ -2,6 +2,7 @@ package rauthy_test
 
 import (
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
@@ -40,7 +41,7 @@ var oidcClientResponse = `{
 		}`
 
 func TestGetOidcClient(t *testing.T) {
-	ts := CreateServer(oidcClientResponse)
+	ts := CreateServer(oidcClientResponse, http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))

@@ -13,8 +13,8 @@ type PasswordPolicy struct {
 	IncludeLowerCase int `json:"include_lower_case"`
 	IncludeUpperCase int `json:"include_upper_case"`
 	IncludeSpecial   int `json:"include_special"`
-	NotRecentlyUsed  int `json:"not_recently_used"`
-	ValidDays        int `json:"valid_days"`
+	// NotRecentlyUsed  int `json:"not_recently_used,omitempty"`
+	ValidDays int `json:"valid_days,omitempty"`
 }
 
 func (c *Client) GetPasswordPolicy(ctx context.Context) (*PasswordPolicy, error) {
