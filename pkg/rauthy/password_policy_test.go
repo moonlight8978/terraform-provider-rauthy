@@ -2,17 +2,24 @@ package rauthy_test
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 	"github.com/stretchr/testify/assert"
 )
 
+var passwordPolicyResponse = `{
+			"length_min": 8,
+			"length_max": 128,
+			"include_lower_case": 1,
+			"include_upper_case": 1,
+			"include_digits": 1,
+			"valid_days": 180,
+			"not_recently_used": 3
+		}`
+
 func TestGetPasswordPolicy(t *testing.T) {
-	ts := createServer()
+	ts := CreateServer(passwordPolicyResponse)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
@@ -32,7 +39,7 @@ func TestGetPasswordPolicy(t *testing.T) {
 }
 
 func TestUpdatePasswordPolicy(t *testing.T) {
-	ts := createServer()
+	ts := CreateServer(passwordPolicyResponse)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
@@ -57,20 +64,4 @@ func TestUpdatePasswordPolicy(t *testing.T) {
 	assert.Equal(t, 1, passwordPolicy.IncludeDigits)
 	assert.Equal(t, 180, passwordPolicy.ValidDays)
 	assert.Equal(t, 3, passwordPolicy.NotRecentlyUsed)
-}
-
-func createServer() *httptest.Server {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, `{
-			"length_min": 8,
-			"length_max": 128,
-			"include_lower_case": 1,
-			"include_upper_case": 1,
-			"include_digits": 1,
-			"valid_days": 180,
-			"not_recently_used": 3
-		}`)
-	}))
-
-	return ts
 }

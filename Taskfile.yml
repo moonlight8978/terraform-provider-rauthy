@@ -1,5 +1,13 @@
 version: 3
 tasks:
+  prepare:
+    cmds:
+      - go install
+      - go mod tidy
+
+  up:
+    cmd: devcontainer up --workspace-folder .
+
   test:acc:
     env:
       TF_ACC: "1"
