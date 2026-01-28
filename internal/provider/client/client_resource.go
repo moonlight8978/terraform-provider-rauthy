@@ -267,6 +267,14 @@ func (r *ClientResource) Delete(ctx context.Context, req resource.DeleteRequest,
 }
 
 func (r *ClientResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	id := req.ID
+
+	_, err := r.client.GetOidcClient(context.Background(), id)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Client does not exist: %s", err))
+		return
+	}
+
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 

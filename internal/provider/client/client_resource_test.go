@@ -41,6 +41,11 @@ func TestAccClientResource(t *testing.T) {
 					),
 				},
 			},
+			{
+				ResourceName:      "rauthy_client.google",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
