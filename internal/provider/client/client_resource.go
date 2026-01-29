@@ -220,7 +220,8 @@ func (r *ClientResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	_, err := r.client.GetOidcClient(ctx, data.Id.ValueString())
+	client, err := r.client.GetOidcClient(ctx, data.Id.ValueString())
+	data.FromApiResource(&client)
 
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read client, got error: %s", err))
@@ -298,7 +299,14 @@ func (r *ClientResourceModel) ToApi() rauthy.OidcClient {
 }
 
 func (r *ClientResourceModel) FromApiResource(client *rauthy.OidcClient) {
+	r.Name = types.StringValue(client.Name)
+	r.Enabled = types.BoolValue(client.Enabled)
+	r.Confidential = types.BoolValue(client.Confidential)
+	r.RedirectUris = tfutils.StringSliceToList(client.RedirectUris)
+	r.FlowsEnabled = tfutils.StringSliceToList(client.FlowsEnabled)
 	r.Scopes = tfutils.StringSliceToList(client.Scopes)
+	r.Challenges = tfutils.StringSliceToList(client.Challenges)
+
 	r.AccessTokenAlg = types.StringValue(client.AccessTokenAlg)
 	r.AuthCodeLifetime = types.Int64Value(client.AuthCodeLifetime)
 	r.DefaultScopes = tfutils.StringSliceToList(client.DefaultScopes)

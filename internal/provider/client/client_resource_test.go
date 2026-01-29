@@ -17,7 +17,7 @@ func TestAccClientResource(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccClientResourceConfig("google", "Google", true, []string{"http://localhost/callback"}),
+				Config: testAccClientResourceConfig("google", "Google"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						"rauthy_client.google",
@@ -46,17 +46,27 @@ func TestAccClientResource(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccClientResourceConfig("google", "Google 2"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"rauthy_client.google",
+						tfjsonpath.New("name"),
+						knownvalue.StringExact("Google 2"),
+					),
+				},
+			},
 		},
 	})
 }
 
-func testAccClientResourceConfig(id string, name string, confidential bool, redirectURIs []string) string {
+func testAccClientResourceConfig(id string, name string) string {
 	return fmt.Sprintf(`
 resource "rauthy_client" "google" {
 	id = %[1]q
 	name = %[2]q
-	confidential = %[3]t
-	redirect_uris = %[4]q
+	confidential = true
+	redirect_uris = ["http://localhost/callback"]
 	enabled = true
 	flows_enabled = ["authorization_code"]
 	access_token_alg = "EdDSA"
@@ -67,5 +77,5 @@ resource "rauthy_client" "google" {
 	challenges = ["S256"]
 	force_mfa = false
 }
-`, id, name, confidential, redirectURIs)
+`, id, name)
 }
