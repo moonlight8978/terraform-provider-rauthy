@@ -93,6 +93,7 @@ func (p *RauthyProvider) Configure(ctx context.Context, req provider.ConfigureRe
 func (p *RauthyProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		client.NewClientResource,
+		client.NewClientSecretResource,
 		passwordpolicy.NewPasswordPolicyResource,
 	}
 }
