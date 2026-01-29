@@ -8,6 +8,7 @@ services:
     environment:
       LOCAL_TEST: "true"
       SWAGGER_UI_ENABLE: "true"
+      LOG_LEVEL: debug
     volumes:
       - rauthy-data:/app/data
 
@@ -17,6 +18,12 @@ services:
     ports:
       - "17025:1025"
       - "17080:1080"
+
+  echo:
+    image: mendhak/http-https-echo:latest
+    restart: unless-stopped
+    ports:
+      - "17180:8080"
 
   app:
     image: mcr.microsoft.com/devcontainers/go:2.0.6-1.25-bookworm

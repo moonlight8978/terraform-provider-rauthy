@@ -78,6 +78,11 @@ func (c *Client) Request(ctx context.Context, method, path string, payload, resp
 		return nil, fmt.Errorf("Failed to execute request %s %s - Reason: %w", method, path, err)
 	}
 
+	if resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Failed to execute request %s %s - Status Code: %d - Reason: %s", method, path, resp.StatusCode, string(body))
+	}
+
 	if responseBody != nil {
 		err = json.NewDecoder(resp.Body).Decode(responseBody)
 		if err != nil {

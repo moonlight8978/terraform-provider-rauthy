@@ -20,12 +20,12 @@ func TestAccPasswordPolicyResource(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPasswordPolicyResourceConfig(10, 100, 3),
+				Config: testAccPasswordPolicyResourceConfig(8, 100, 3),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						"rauthy_password_policy.default",
 						tfjsonpath.New("length_min"),
-						knownvalue.Int64Exact(10),
+						knownvalue.Int64Exact(8),
 					),
 					statecheck.ExpectKnownValue(
 						"rauthy_password_policy.default",
@@ -65,7 +65,7 @@ func TestAccPasswordPolicyResource(t *testing.T) {
 				},
 			},
 			{
-				Config: testAccPasswordPolicyResourceConfig(20, 200, 0),
+				Config: testAccPasswordPolicyResourceConfig(20, 128, 365),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						"rauthy_password_policy.default",
@@ -75,7 +75,7 @@ func TestAccPasswordPolicyResource(t *testing.T) {
 					statecheck.ExpectKnownValue(
 						"rauthy_password_policy.default",
 						tfjsonpath.New("length_max"),
-						knownvalue.Int64Exact(200),
+						knownvalue.Int64Exact(128),
 					),
 					statecheck.ExpectKnownValue(
 						"rauthy_password_policy.default",
@@ -105,7 +105,7 @@ func TestAccPasswordPolicyResource(t *testing.T) {
 					statecheck.ExpectKnownValue(
 						"rauthy_password_policy.default",
 						tfjsonpath.New("valid_days"),
-						knownvalue.Int64Exact(0),
+						knownvalue.Int64Exact(365),
 					),
 				},
 			},

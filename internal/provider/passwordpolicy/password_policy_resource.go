@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
 
@@ -107,7 +106,7 @@ func (r *PasswordPolicyResource) Configure(ctx context.Context, req resource.Con
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *http.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *rauthy.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -126,96 +125,70 @@ func (r *PasswordPolicyResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	// httpReq := &http.Request{
-	// 	Method: "POST",
-	// 	URL: &url.URL{
-	// 		Scheme: "http",
-	// 		Host:   "localhost:8080",
-	// 		Path:   "/password-policy",
-	// 	},
-	// }
+	_, err := r.client.UpdatePasswordPolicy(ctx, model.ToPayload())
 
-	// httpResp, err := r.client.Do(httpReq)
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create example, got error: %s", err))
-	//     return
-	// }
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create password policy, got error: %s", err))
+		return
+	}
 
-	// For the purposes of this example code, hardcoding a response value to
-	// save into the Terraform state.
-	// data.Id = types.StringValue("example-id")
-
-	// Write logs using the tflog package
-	// Documentation: https://terraform.io/plugin/log
-	tflog.Trace(ctx, "created a resource")
-
-	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
 }
 
 func (r *PasswordPolicyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data PasswordPolicyResourceModel
 
-	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// If applicable, this is a great opportunity to initialize any necessary
-	// provider client data and make a call using it.
-	// httpResp, err := r.client.Do(httpReq)
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read example, got error: %s", err))
-	//     return
-	// }
-
-	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *PasswordPolicyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data PasswordPolicyResourceModel
 
-	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// If applicable, this is a great opportunity to initialize any necessary
-	// provider client data and make a call using it.
-	// httpResp, err := r.client.Do(httpReq)
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update example, got error: %s", err))
-	//     return
-	// }
+	_, err := r.client.UpdatePasswordPolicy(ctx, data.ToPayload())
 
-	// Save updated data into Terraform state
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update password policy, got error: %s", err))
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *PasswordPolicyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data PasswordPolicyResourceModel
 
-	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	// If applicable, this is a great opportunity to initialize any necessary
-	// provider client data and make a call using it.
-	// httpResp, err := r.client.Do(httpReq)
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete example, got error: %s", err))
-	//     return
-	// }
 }
 
 func (r *PasswordPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	panic("not supported")
+}
+
+func (model *PasswordPolicyResourceModel) ToPayload() *rauthy.PasswordPolicy {
+	return &rauthy.PasswordPolicy{
+		IncludeUpperCase: int(model.IncludeUpperCase.ValueInt64()),
+		IncludeLowerCase: int(model.IncludeLowerCase.ValueInt64()),
+		IncludeDigits:    int(model.IncludeDigits.ValueInt64()),
+		IncludeSpecial:   int(model.IncludeSpecial.ValueInt64()),
+		LengthMin:        int(model.LengthMin.ValueInt64()),
+		LengthMax:        int(model.LengthMax.ValueInt64()),
+		// NotRecentlyUsed:  int(model.NotRecentlyUsed.ValueInt64()),
+		ValidDays: int(model.ValidDays.ValueInt64()),
+	}
 }
