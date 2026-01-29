@@ -8,11 +8,11 @@ tasks:
   up:
     cmd: devcontainer up --workspace-folder .
 
-  test:acc:
+  test:provider:
     env:
       TF_ACC: "1"
     vars:
-      SCOPE: '{{ len .CLI_ARGS_LIST | eq 0 | ternary "./..." .CLI_ARGS }}'
+      SCOPE: '{{ len .CLI_ARGS_LIST | eq 0 | ternary "./internal/..." .CLI_ARGS }}'
     cmd: go test -v {{.SCOPE}}
 
   test:pkg:

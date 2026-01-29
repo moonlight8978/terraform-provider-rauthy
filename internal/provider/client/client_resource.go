@@ -200,7 +200,7 @@ func (r *ClientResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	client, err := r.client.UpdateOidcClient(ctx, newClient.ID, &apiModel)
+	client, err := r.client.UpdateOidcClient(ctx, newClient.Id, &apiModel)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update client, got error: %s", err))
 		return
@@ -281,7 +281,7 @@ func (r *ClientResource) ImportState(ctx context.Context, req resource.ImportSta
 
 func (r *ClientResourceModel) ToApi() rauthy.OidcClient {
 	return rauthy.OidcClient{
-		ID:                  r.Id.ValueString(),
+		Id:                  r.Id.ValueString(),
 		Name:                r.Name.ValueString(),
 		Enabled:             r.Enabled.ValueBool(),
 		Confidential:        r.Confidential.ValueBool(),

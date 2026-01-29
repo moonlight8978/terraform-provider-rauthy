@@ -38,8 +38,12 @@ func TestAccClientSecretResource(t *testing.T) {
 			},
 			{
 				ResourceName:      "rauthy_client_secret.test",
+				ImportStateId:     "testsecret/one",
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"secret",
+				},
 			},
 		},
 	})

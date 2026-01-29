@@ -7,7 +7,7 @@ import (
 )
 
 type OidcClient struct {
-	ID                  string   `json:"id"`
+	Id                  string   `json:"id"`
 	Name                string   `json:"name"`
 	Enabled             bool     `json:"enabled"`
 	Confidential        bool     `json:"confidential"`
@@ -27,7 +27,7 @@ type OidcClient struct {
 }
 
 type CreateOidcClientPayload struct {
-	ID            string   `json:"id"`
+	Id            string   `json:"id"`
 	Confidential  bool     `json:"confidential"`
 	Name          string   `json:"name"`
 	RedirectUris  []string `json:"redirect_uris"`
@@ -36,7 +36,7 @@ type CreateOidcClientPayload struct {
 
 func (c OidcClient) ToCreatePayload() CreateOidcClientPayload {
 	return CreateOidcClientPayload{
-		ID:            c.ID,
+		Id:            c.Id,
 		Confidential:  c.Confidential,
 		Name:          c.Name,
 		RedirectUris:  c.RedirectUris,

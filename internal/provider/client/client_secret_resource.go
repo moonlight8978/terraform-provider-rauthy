@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 	"fmt"
+	"strings"
 
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
@@ -130,5 +130,25 @@ func (r *ClientSecretResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *ClientSecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	clientId, id, found := strings.Cut(req.ID, "/")
+
+	if !found {
+		resp.Diagnostics.AddError("Client Error", "ID format is invalid, expected <client_id>/<secret_id>")
+		return
+	}
+
+	_, err := r.client.GetOidcClient(ctx, clientId)
+
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to import client secret, got error: %s", err))
+		return
+	}
+
+	model := &ClientSecretResourceModel{
+		ClientId:          types.StringValue(clientId),
+		Id:                types.StringValue(id),
+		CacheCurrentHours: types.Int64Value(0),
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
 }
