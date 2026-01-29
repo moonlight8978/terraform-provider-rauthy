@@ -52,5 +52,5 @@ func TestGetOidcClient(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, oidcClient.ID, "rauthy")
+	assert.Equal(t, oidcClient.Id, "rauthy")
 }
