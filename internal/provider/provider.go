@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/client"
+	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/oidc_provider"
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/passwordpolicy"
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
@@ -94,6 +95,7 @@ func (p *RauthyProvider) Resources(ctx context.Context) []func() resource.Resour
 	return []func() resource.Resource{
 		client.NewClientResource,
 		client.NewClientSecretResource,
+		oidc_provider.NewOidcProviderResource,
 		passwordpolicy.NewPasswordPolicyResource,
 	}
 }
