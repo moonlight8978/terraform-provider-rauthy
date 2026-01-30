@@ -11,10 +11,14 @@ type Role struct {
 	Name string `json:"name"`
 }
 
-func (c *Client) CreateRole(ctx context.Context, role *Role) (Role, error) {
+type RoleRequest struct {
+	Role string `json:"role"`
+}
+
+func (c *Client) CreateRole(ctx context.Context, req *RoleRequest) (Role, error) {
 	var createdRole Role
 
-	if _, err := c.Request(ctx, http.MethodPost, "/roles", role, &createdRole); err != nil {
+	if _, err := c.Request(ctx, http.MethodPost, "/roles", req, &createdRole); err != nil {
 		return createdRole, err
 	}
 
@@ -47,10 +51,10 @@ func (c *Client) GetRole(ctx context.Context, id string) (*Role, error) {
 	return nil, fmt.Errorf("role %s not found", id)
 }
 
-func (c *Client) UpdateRole(ctx context.Context, id string, role *Role) (*Role, error) {
+func (c *Client) UpdateRole(ctx context.Context, id string, req *RoleRequest) (*Role, error) {
 	var updatedRole Role
 
-	if _, err := c.Request(ctx, http.MethodPut, fmt.Sprintf("/roles/%s", id), role, &updatedRole); err != nil {
+	if _, err := c.Request(ctx, http.MethodPut, fmt.Sprintf("/roles/%s", id), req, &updatedRole); err != nil {
 		return nil, err
 	}
 
