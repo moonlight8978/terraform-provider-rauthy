@@ -33,71 +33,71 @@ var oidcProviderResponse = `{
 	"userinfo_endpoint": "https://openidconnect.googleapis.com/v1/userinfo"
 }`
 
-func TestCreateOidcProvider(t *testing.T) {
+func TestCreateAuthProvider(t *testing.T) {
 	ts := CreateServer(oidcProviderResponse, http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
 
-	p := &rauthy.OidcProvider{
+	p := &rauthy.AuthProvider{
 		Id:           "google",
 		Name:         "Google",
 		ClientId:     "google-client-id",
 		ClientSecret: "google-client-secret",
 	}
 
-	provider, err := client.CreateOidcProvider(context.Background(), p)
+	provider, err := client.CreateAuthProvider(context.Background(), p)
 	assert.Nil(t, err)
 	assert.Equal(t, "google", provider.Id)
 	assert.Equal(t, "Google", provider.Name)
 }
 
-func TestGetOidcProvider(t *testing.T) {
+func TestGetAuthProvider(t *testing.T) {
 	ts := CreateServer("["+oidcProviderResponse+"]", http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
 
-	provider, err := client.GetOidcProvider(context.Background(), "google")
+	provider, err := client.GetAuthProvider(context.Background(), "google")
 	assert.Nil(t, err)
 	assert.Equal(t, "google", provider.Id)
 	assert.Equal(t, "Google", provider.Name)
 }
 
-func TestGetOidcProvider_NotFound(t *testing.T) {
+func TestGetAuthProvider_NotFound(t *testing.T) {
 	ts := CreateServer("["+oidcProviderResponse+"]", http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
 
-	_, err := client.GetOidcProvider(context.Background(), "not-exists")
+	_, err := client.GetAuthProvider(context.Background(), "not-exists")
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), "no provider found with id")
 }
 
-func TestUpdateOidcProvider(t *testing.T) {
+func TestUpdateAuthProvider(t *testing.T) {
 	ts := CreateServer(oidcProviderResponse, http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
 
-	p := &rauthy.OidcProvider{
+	p := &rauthy.AuthProvider{
 		Id:   "google",
 		Name: "Google Updated",
 	}
 
-	provider, err := client.UpdateOidcProvider(context.Background(), "google", p)
+	provider, err := client.UpdateAuthProvider(context.Background(), "google", p)
 	assert.Nil(t, err)
 	// The mock response has Name="Google", so this confirms the response is parsed correctly.
 	assert.Equal(t, "Google", provider.Name)
 }
 
-func TestDeleteOidcProvider(t *testing.T) {
+func TestDeleteAuthProvider(t *testing.T) {
 	ts := CreateServer("", http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
 
-	err := client.DeleteOidcProvider(context.Background(), "google")
+	err := client.DeleteAuthProvider(context.Background(), "google")
 	assert.Nil(t, err)
 }

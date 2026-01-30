@@ -1,4 +1,4 @@
-package client
+package oidc_client
 
 import (
 	"context"
@@ -13,33 +13,33 @@ import (
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
 
-var _ resource.Resource = &ClientSecretResource{}
-var _ resource.ResourceWithImportState = &ClientSecretResource{}
+var _ resource.Resource = &OidcClientSecretResource{}
+var _ resource.ResourceWithImportState = &OidcClientSecretResource{}
 
-func NewClientSecretResource() resource.Resource {
-	return &ClientSecretResource{}
+func NewOidcClientSecretResource() resource.Resource {
+	return &OidcClientSecretResource{}
 }
 
-type ClientSecretResource struct {
+type OidcClientSecretResource struct {
 	client *rauthy.Client
 }
 
-func (r *ClientSecretResource) SetClient(c *rauthy.Client) {
+func (r *OidcClientSecretResource) SetClient(c *rauthy.Client) {
 	r.client = c
 }
 
-type ClientSecretResourceModel struct {
+type OidcClientSecretResourceModel struct {
 	Id                types.String `tfsdk:"id"`
 	ClientId          types.String `tfsdk:"client_id"`
 	CacheCurrentHours types.Int64  `tfsdk:"cache_current_hours"`
 	Secret            types.String `tfsdk:"secret"`
 }
 
-func (r *ClientSecretResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *OidcClientSecretResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_client_secret"
 }
 
-func (r *ClientSecretResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *OidcClientSecretResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Client secret resource",
 
@@ -67,12 +67,12 @@ func (r *ClientSecretResource) Schema(ctx context.Context, req resource.SchemaRe
 	}
 }
 
-func (r *ClientSecretResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *OidcClientSecretResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	utils.ConfigureProvider(ctx, req, resp, r)
 }
 
-func (r *ClientSecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var model ClientSecretResourceModel
+func (r *OidcClientSecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var model OidcClientSecretResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &model)...)
@@ -95,8 +95,8 @@ func (r *ClientSecretResource) Create(ctx context.Context, req resource.CreateRe
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
 }
 
-func (r *ClientSecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var model ClientSecretResourceModel
+func (r *OidcClientSecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var model OidcClientSecretResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &model)...)
 
@@ -107,8 +107,8 @@ func (r *ClientSecretResource) Read(ctx context.Context, req resource.ReadReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
 }
 
-func (r *ClientSecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var model ClientSecretResourceModel
+func (r *OidcClientSecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var model OidcClientSecretResourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &model)...)
 
@@ -119,8 +119,8 @@ func (r *ClientSecretResource) Update(ctx context.Context, req resource.UpdateRe
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
 }
 
-func (r *ClientSecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var model ClientSecretResourceModel
+func (r *OidcClientSecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var model OidcClientSecretResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &model)...)
 
@@ -129,7 +129,7 @@ func (r *ClientSecretResource) Delete(ctx context.Context, req resource.DeleteRe
 	}
 }
 
-func (r *ClientSecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *OidcClientSecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	clientId, id, found := strings.Cut(req.ID, "/")
 
 	if !found {
@@ -144,7 +144,7 @@ func (r *ClientSecretResource) ImportState(ctx context.Context, req resource.Imp
 		return
 	}
 
-	model := &ClientSecretResourceModel{
+	model := &OidcClientSecretResourceModel{
 		ClientId:          types.StringValue(clientId),
 		Id:                types.StringValue(id),
 		CacheCurrentHours: types.Int64Value(0),

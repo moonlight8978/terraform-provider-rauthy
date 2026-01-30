@@ -1,4 +1,4 @@
-package client_test
+package auth_provider_test
 
 import (
 	"fmt"
@@ -11,46 +11,41 @@ import (
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/acctest"
 )
 
-func TestAccClientResource(t *testing.T) {
+func TestAccAuthProviderResource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccClientResourceConfig("google", "Google"),
+				Config: testAccAuthProviderResourceConfig("google", "Google"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
-						"rauthy_client.google",
+						"rauthy_auth_provider.google",
 						tfjsonpath.New("name"),
 						knownvalue.StringExact("Google"),
 					),
 					statecheck.ExpectKnownValue(
-						"rauthy_client.google",
-						tfjsonpath.New("confidential"),
-						knownvalue.Bool(true),
-					),
-					statecheck.ExpectKnownValue(
-						"rauthy_client.google",
+						"rauthy_auth_provider.google",
 						tfjsonpath.New("id"),
 						knownvalue.StringExact("google"),
 					),
 					statecheck.ExpectKnownValue(
-						"rauthy_client.google",
-						tfjsonpath.New("redirect_uris"),
-						knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("http://localhost/callback")}),
+						"rauthy_auth_provider.google",
+						tfjsonpath.New("issuer"),
+						knownvalue.StringExact("https://accounts.google.com"),
 					),
 				},
 			},
 			{
-				ResourceName:      "rauthy_client.google",
+				ResourceName:      "rauthy_auth_provider.google",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccClientResourceConfig("google", "Google 2"),
+				Config: testAccAuthProviderResourceConfig("google", "Google 2"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
-						"rauthy_client.google",
+						"rauthy_auth_provider.google",
 						tfjsonpath.New("name"),
 						knownvalue.StringExact("Google 2"),
 					),
@@ -60,22 +55,21 @@ func TestAccClientResource(t *testing.T) {
 	})
 }
 
-func testAccClientResourceConfig(id string, name string) string {
+func testAccAuthProviderResourceConfig(id string, name string) string {
 	return fmt.Sprintf(`
-resource "rauthy_client" "google" {
+resource "rauthy_auth_provider" "google" {
 	id = %[1]q
 	name = %[2]q
-	confidential = true
-	redirect_uris = ["http://localhost/callback"]
+	typ = "google"
+	issuer = "https://accounts.google.com"
+	client_id = "google-client-id"
+	client_secret = "google-client-secret"
+	authorization_endpoint = "https://accounts.google.com/o/oauth2/v2/auth"
+	token_endpoint = "https://oauth2.googleapis.com/token"
+	userinfo_endpoint = "https://openidconnect.googleapis.com/v1/userinfo"
+	jwks_endpoint = "https://www.googleapis.com/oauth2/v3/certs"
+	scope = "openid profile email"
 	enabled = true
-	flows_enabled = ["authorization_code"]
-	access_token_alg = "EdDSA"
-	id_token_alg = "EdDSA"
-	auth_code_lifetime = 10
-	access_token_lifetime = 10
-	scopes = ["openid"]
-	challenges = ["S256"]
-	force_mfa = false
 }
 `, id, name)
 }

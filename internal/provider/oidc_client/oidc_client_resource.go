@@ -1,4 +1,4 @@
-package client
+package oidc_client
 
 import (
 	"context"
@@ -17,21 +17,18 @@ import (
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/tfutils"
 )
 
-// Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &ClientResource{}
-var _ resource.ResourceWithImportState = &ClientResource{}
+var _ resource.Resource = &OidcClientResource{}
+var _ resource.ResourceWithImportState = &OidcClientResource{}
 
-func NewClientResource() resource.Resource {
-	return &ClientResource{}
+func NewOidcClientResource() resource.Resource {
+	return &OidcClientResource{}
 }
 
-// ClientResource defines the resource implementation.
-type ClientResource struct {
+type OidcClientResource struct {
 	client *rauthy.Client
 }
 
-// ClientResourceModel describes the resource data model.
-type ClientResourceModel struct {
+type OidcClientResourceModel struct {
 	Id                     types.String `tfsdk:"id"`
 	Name                   types.String `tfsdk:"name"`
 	Enabled                types.Bool   `tfsdk:"enabled"`
@@ -51,11 +48,11 @@ type ClientResourceModel struct {
 	Contacts               types.List   `tfsdk:"contacts"`
 }
 
-func (r *ClientResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *OidcClientResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_client"
 }
 
-func (r *ClientResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *OidcClientResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Client resource",
 
@@ -163,7 +160,7 @@ func (r *ClientResource) Schema(ctx context.Context, req resource.SchemaRequest,
 	}
 }
 
-func (r *ClientResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *OidcClientResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -182,8 +179,8 @@ func (r *ClientResource) Configure(ctx context.Context, req resource.ConfigureRe
 	r.client = client
 }
 
-func (r *ClientResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data ClientResourceModel
+func (r *OidcClientResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data OidcClientResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -211,8 +208,8 @@ func (r *ClientResource) Create(ctx context.Context, req resource.CreateRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ClientResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data ClientResourceModel
+func (r *OidcClientResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data OidcClientResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -231,8 +228,8 @@ func (r *ClientResource) Read(ctx context.Context, req resource.ReadRequest, res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ClientResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data ClientResourceModel
+func (r *OidcClientResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data OidcClientResourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -252,8 +249,8 @@ func (r *ClientResource) Update(ctx context.Context, req resource.UpdateRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ClientResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data ClientResourceModel
+func (r *OidcClientResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data OidcClientResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -267,7 +264,7 @@ func (r *ClientResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	}
 }
 
-func (r *ClientResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *OidcClientResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	id := req.ID
 
 	_, err := r.client.GetOidcClient(context.Background(), id)
@@ -279,7 +276,7 @@ func (r *ClientResource) ImportState(ctx context.Context, req resource.ImportSta
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func (r *ClientResourceModel) ToApi() rauthy.OidcClient {
+func (r *OidcClientResourceModel) ToApi() rauthy.OidcClient {
 	return rauthy.OidcClient{
 		Id:                  r.Id.ValueString(),
 		Name:                r.Name.ValueString(),
@@ -298,7 +295,7 @@ func (r *ClientResourceModel) ToApi() rauthy.OidcClient {
 	}
 }
 
-func (r *ClientResourceModel) FromApiResource(client *rauthy.OidcClient) {
+func (r *OidcClientResourceModel) FromApiResource(client *rauthy.OidcClient) {
 	r.Name = types.StringValue(client.Name)
 	r.Enabled = types.BoolValue(client.Enabled)
 	r.Confidential = types.BoolValue(client.Confidential)

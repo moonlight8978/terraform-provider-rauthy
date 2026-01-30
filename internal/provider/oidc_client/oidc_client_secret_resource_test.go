@@ -1,4 +1,4 @@
-package client_test
+package oidc_client_test
 
 import (
 	"fmt"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type OidcProvider struct {
+type AuthProvider struct {
 	AdminClaimPath        string `json:"admin_claim_path"`
 	AdminClaimValue       string `json:"admin_claim_value"`
 	AuthorizationEndpoint string `json:"authorization_endpoint"`
@@ -29,8 +29,8 @@ type OidcProvider struct {
 	UserinfoEndpoint      string `json:"userinfo_endpoint"`
 }
 
-func (c *Client) CreateOidcProvider(ctx context.Context, provider *OidcProvider) (*OidcProvider, error) {
-	var newProvider OidcProvider
+func (c *Client) CreateAuthProvider(ctx context.Context, provider *AuthProvider) (*AuthProvider, error) {
+	var newProvider AuthProvider
 	_, err := c.Request(ctx, "POST", "/providers/create", &provider, &newProvider)
 
 	if err != nil {
@@ -40,15 +40,15 @@ func (c *Client) CreateOidcProvider(ctx context.Context, provider *OidcProvider)
 	return &newProvider, nil
 }
 
-func (c *Client) GetOidcProvider(ctx context.Context, id string) (*OidcProvider, error) {
-	var providers []OidcProvider
+func (c *Client) GetAuthProvider(ctx context.Context, id string) (*AuthProvider, error) {
+	var providers []AuthProvider
 	_, err := c.Request(ctx, "GET", "/providers/", nil, &providers)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var provider OidcProvider
+	var provider AuthProvider
 
 	for _, p := range providers {
 		if p.Id == id {
@@ -57,15 +57,15 @@ func (c *Client) GetOidcProvider(ctx context.Context, id string) (*OidcProvider,
 		}
 	}
 
-	if provider == (OidcProvider{}) {
+	if provider == (AuthProvider{}) {
 		return nil, fmt.Errorf("no provider found with id %s", id)
 	}
 
 	return &provider, nil
 }
 
-func (c *Client) UpdateOidcProvider(ctx context.Context, id string, provider *OidcProvider) (*OidcProvider, error) {
-	var updatedProvider OidcProvider
+func (c *Client) UpdateAuthProvider(ctx context.Context, id string, provider *AuthProvider) (*AuthProvider, error) {
+	var updatedProvider AuthProvider
 	_, err := c.Request(ctx, "PUT", fmt.Sprintf("/providers/%s", id), &provider, &updatedProvider)
 
 	if err != nil {
@@ -75,7 +75,7 @@ func (c *Client) UpdateOidcProvider(ctx context.Context, id string, provider *Oi
 	return &updatedProvider, nil
 }
 
-func (c *Client) DeleteOidcProvider(ctx context.Context, id string) error {
+func (c *Client) DeleteAuthProvider(ctx context.Context, id string) error {
 	_, err := c.Request(ctx, "DELETE", fmt.Sprintf("/providers/%s", id), nil, nil)
 
 	if err != nil {

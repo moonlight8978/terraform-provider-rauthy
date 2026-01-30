@@ -1,4 +1,4 @@
-package oidc_provider
+package auth_provider
 
 import (
 	"context"
@@ -14,18 +14,18 @@ import (
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
 
-var _ resource.Resource = &OidcProviderResource{}
-var _ resource.ResourceWithImportState = &OidcProviderResource{}
+var _ resource.Resource = &AuthProviderResource{}
+var _ resource.ResourceWithImportState = &AuthProviderResource{}
 
-func NewOidcProviderResource() resource.Resource {
-	return &OidcProviderResource{}
+func NewAuthProviderResource() resource.Resource {
+	return &AuthProviderResource{}
 }
 
-type OidcProviderResource struct {
+type AuthProviderResource struct {
 	client *rauthy.Client
 }
 
-type OidcProviderResourceModel struct {
+type AuthProviderResourceModel struct {
 	AdminClaimPath        types.String `tfsdk:"admin_claim_path"`
 	AdminClaimValue       types.String `tfsdk:"admin_claim_value"`
 	AuthorizationEndpoint types.String `tfsdk:"authorization_endpoint"`
@@ -49,11 +49,11 @@ type OidcProviderResourceModel struct {
 	UserinfoEndpoint      types.String `tfsdk:"userinfo_endpoint"`
 }
 
-func (r *OidcProviderResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_oidc_provider"
+func (r *AuthProviderResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_auth_provider"
 }
 
-func (r *OidcProviderResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *AuthProviderResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "OIDC Provider resource",
 
@@ -162,7 +162,7 @@ func (r *OidcProviderResource) Schema(ctx context.Context, req resource.SchemaRe
 	}
 }
 
-func (r *OidcProviderResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *AuthProviderResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -181,8 +181,8 @@ func (r *OidcProviderResource) Configure(ctx context.Context, req resource.Confi
 	r.client = client
 }
 
-func (r *OidcProviderResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data OidcProviderResourceModel
+func (r *AuthProviderResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data AuthProviderResourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -191,7 +191,7 @@ func (r *OidcProviderResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	apiModel := data.ToApi()
-	newProvider, err := r.client.CreateOidcProvider(ctx, &apiModel)
+	newProvider, err := r.client.CreateAuthProvider(ctx, &apiModel)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create OIDC provider, got error: %s", err))
 		return
@@ -202,8 +202,8 @@ func (r *OidcProviderResource) Create(ctx context.Context, req resource.CreateRe
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *OidcProviderResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data OidcProviderResourceModel
+func (r *AuthProviderResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data AuthProviderResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -211,7 +211,7 @@ func (r *OidcProviderResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	provider, err := r.client.GetOidcProvider(ctx, data.Id.ValueString())
+	provider, err := r.client.GetAuthProvider(ctx, data.Id.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read OIDC provider, got error: %s", err))
 		return
@@ -222,8 +222,8 @@ func (r *OidcProviderResource) Read(ctx context.Context, req resource.ReadReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *OidcProviderResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data OidcProviderResourceModel
+func (r *AuthProviderResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data AuthProviderResourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -232,7 +232,7 @@ func (r *OidcProviderResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 
 	apiModel := data.ToApi()
-	provider, err := r.client.UpdateOidcProvider(ctx, data.Id.ValueString(), &apiModel)
+	provider, err := r.client.UpdateAuthProvider(ctx, data.Id.ValueString(), &apiModel)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update OIDC provider, got error: %s", err))
 		return
@@ -243,8 +243,8 @@ func (r *OidcProviderResource) Update(ctx context.Context, req resource.UpdateRe
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *OidcProviderResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data OidcProviderResourceModel
+func (r *AuthProviderResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data AuthProviderResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -252,18 +252,18 @@ func (r *OidcProviderResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	if err := r.client.DeleteOidcProvider(ctx, data.Id.ValueString()); err != nil {
+	if err := r.client.DeleteAuthProvider(ctx, data.Id.ValueString()); err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete OIDC provider, got error: %s", err))
 		return
 	}
 }
 
-func (r *OidcProviderResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *AuthProviderResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func (r *OidcProviderResourceModel) ToApi() rauthy.OidcProvider {
-	return rauthy.OidcProvider{
+func (r *AuthProviderResourceModel) ToApi() rauthy.AuthProvider {
+	return rauthy.AuthProvider{
 		Id:                    r.Id.ValueString(),
 		Name:                  r.Name.ValueString(),
 		Issuer:                r.Issuer.ValueString(),
@@ -288,7 +288,7 @@ func (r *OidcProviderResourceModel) ToApi() rauthy.OidcProvider {
 	}
 }
 
-func (r *OidcProviderResourceModel) FromApiResource(provider *rauthy.OidcProvider) {
+func (r *AuthProviderResourceModel) FromApiResource(provider *rauthy.AuthProvider) {
 	r.Id = types.StringValue(provider.Id)
 	r.Name = types.StringValue(provider.Name)
 	r.Issuer = types.StringValue(provider.Issuer)
