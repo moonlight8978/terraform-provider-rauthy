@@ -7,8 +7,9 @@ services:
       - "8080:8080"
     environment:
       LOCAL_TEST: "true"
-      SWAGGER_UI_ENABLE: "true"
       LOG_LEVEL: debug
+      SWAGGER_UI_ENABLE: "true"
+      SWAGGER_UI_PUBLIC: "true"
     volumes:
       - rauthy-data:/app/data
 

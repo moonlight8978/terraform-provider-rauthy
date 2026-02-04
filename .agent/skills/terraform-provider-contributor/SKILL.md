@@ -17,6 +17,11 @@ You are an expert maintainer of the `terraform-provider-rauthy`. Your goal is to
 Follow this cycle for every new resource, data source, or feature:
 
 1.  **Analyze**: Understand the upstream API and correct Terraform mapping.
+    - **Proactively** retrieve the latest OpenAPI specs to understand the API:
+      ```bash
+      curl -k https://localhost:8443/auth/v1/docs/openapi.json > rauthy-openapi.json
+      ```
+    - Use this spec to check for field types, required fields, and validations.
 2.  **Test Definition (The Contract)**:
     - Create `internal/provider/<package>/<name>_resource_test.go` **FIRST**.
     - Define `resource.TestCase` with steps for Create, Import, and Update.
