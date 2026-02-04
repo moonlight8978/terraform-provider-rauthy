@@ -682,6 +682,10 @@ go fmt ./...
 golangci-lint run
 ```
 
+## Chore
+
+- Always create temporary files or planning files in `tmp` directory, name it meaningfully
+
 ## Additional Resources
 
 - [Terraform Plugin Framework Documentation](https://developer.hashicorp.com/terraform/plugin/framework)

@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/auth_provider"
+	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/group"
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/oidc_client"
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/passwordpolicy"
 	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/role"
@@ -99,6 +100,7 @@ func (p *RauthyProvider) Resources(ctx context.Context) []func() resource.Resour
 		auth_provider.NewAuthProviderResource,
 		passwordpolicy.NewPasswordPolicyResource,
 		role.NewRoleResource,
+		group.NewGroupResource,
 	}
 }
 
