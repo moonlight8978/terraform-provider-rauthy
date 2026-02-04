@@ -31,11 +31,7 @@ func TestCreateRole(t *testing.T) {
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
 
-	role := &rauthy.Role{
-		Name: "Role 1",
-	}
-
-	createdRole, err := client.CreateRole(context.Background(), role)
+	createdRole, err := client.CreateRole(context.Background(), &rauthy.RoleRequest{Role: "Role 1"})
 	assert.NoError(t, err)
 	assert.Equal(t, "role-1", createdRole.Id)
 	assert.Equal(t, "Role 1", createdRole.Name)
@@ -77,14 +73,9 @@ func TestUpdateRole(t *testing.T) {
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
 
-	role := &rauthy.Role{
-		Name: "Role 1 Updated",
-	}
-
-	updatedRole, err := client.UpdateRole(context.Background(), "role-1", role)
+	updatedRole, err := client.UpdateRole(context.Background(), "role-1", &rauthy.RoleRequest{Role: "Role 1 Updated"})
 	assert.NoError(t, err)
 	assert.Equal(t, "role-1", updatedRole.Id)
-	// The mock response has "Role 1", so we verify what the server returns
 	assert.Equal(t, "Role 1", updatedRole.Name)
 }
 
