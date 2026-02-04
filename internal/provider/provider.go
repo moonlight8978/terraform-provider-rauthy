@@ -115,6 +115,7 @@ func (p *RauthyProvider) DataSources(ctx context.Context) []func() datasource.Da
 		group.NewGroupDataSource,
 		role.NewRoleDataSource,
 		oidc_client.NewOidcClientDataSource,
+		auth_provider.NewAuthProviderDataSource,
 	}
 }
 

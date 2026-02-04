@@ -42,7 +42,7 @@ func (c *Client) CreateAuthProvider(ctx context.Context, provider *AuthProvider)
 
 func (c *Client) GetAuthProvider(ctx context.Context, id string) (*AuthProvider, error) {
 	var providers []AuthProvider
-	_, err := c.Request(ctx, "GET", "/providers/", nil, &providers)
+	_, err := c.Request(ctx, "GET", "/providers", nil, &providers)
 
 	if err != nil {
 		return nil, err
