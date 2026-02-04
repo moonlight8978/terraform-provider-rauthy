@@ -32,4 +32,5 @@ go.work.sum
 # .vscode/
 
 # AI
-.agent/
+.agent/skills/*
+!.agent/skills/terraform-provider-contributor

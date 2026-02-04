@@ -19,3 +19,8 @@ tasks:
     vars:
       SCOPE: '{{ len .CLI_ARGS_LIST | eq 0 | ternary "./pkg/..." .CLI_ARGS }}'
     cmd: go test -v {{.SCOPE}}
+
+  agent:skill:
+    vars:
+      skill: "{{ index .CLI_ARGS_LIST 0 }}"
+    cmd: ln -s ~/.agent/skills/skills/{{.skill}} .agent/skills/{{.skill}}
