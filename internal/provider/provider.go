@@ -112,7 +112,7 @@ func (p *RauthyProvider) EphemeralResources(ctx context.Context) []func() epheme
 
 func (p *RauthyProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		// NewExampleDataSource,
+		group.NewGroupDataSource,
 	}
 }
 
