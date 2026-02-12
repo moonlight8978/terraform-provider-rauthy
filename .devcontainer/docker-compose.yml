@@ -1,6 +1,6 @@
 services:
   rauthy:
-    image: ghcr.io/moonlight8978/rauthy:0.0.1
+    image: ghcr.io/moonlight8978/rauthy:0.1.0
     restart: unless-stopped
     ports:
       - "8443:8443"
