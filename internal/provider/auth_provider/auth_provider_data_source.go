@@ -3,10 +3,12 @@ package auth_provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/utils"
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
 
@@ -88,6 +90,7 @@ func (d *AuthProviderDataSource) Schema(ctx context.Context, req datasource.Sche
 			},
 			"jwks_endpoint": schema.StringAttribute{
 				MarkdownDescription: "JWKS Endpoint",
+				Optional:            true,
 				Computed:            true,
 			},
 			"scope": schema.StringAttribute{
@@ -96,18 +99,22 @@ func (d *AuthProviderDataSource) Schema(ctx context.Context, req datasource.Sche
 			},
 			"admin_claim_path": schema.StringAttribute{
 				MarkdownDescription: "Admin Claim Path",
+				Optional:            true,
 				Computed:            true,
 			},
 			"admin_claim_value": schema.StringAttribute{
 				MarkdownDescription: "Admin Claim Value",
+				Optional:            true,
 				Computed:            true,
 			},
 			"mfa_claim_path": schema.StringAttribute{
 				MarkdownDescription: "MFA Claim Path",
+				Optional:            true,
 				Computed:            true,
 			},
 			"mfa_claim_value": schema.StringAttribute{
 				MarkdownDescription: "MFA Claim Value",
+				Optional:            true,
 				Computed:            true,
 			},
 			"enabled": schema.BoolAttribute{
@@ -185,11 +192,6 @@ func (d *AuthProviderDataSource) Read(ctx context.Context, req datasource.ReadRe
 	data.TokenEndpoint = types.StringValue(provider.TokenEndpoint)
 	data.UserinfoEndpoint = types.StringValue(provider.UserinfoEndpoint)
 	data.JwksEndpoint = types.StringValue(provider.JwksEndpoint)
-	data.Scope = types.StringValue(provider.Scope)
-	data.AdminClaimPath = types.StringValue(provider.AdminClaimPath)
-	data.AdminClaimValue = types.StringValue(provider.AdminClaimValue)
-	data.MfaClaimPath = types.StringValue(provider.MfaClaimPath)
-	data.MfaClaimValue = types.StringValue(provider.MfaClaimValue)
 	data.Enabled = types.BoolValue(provider.Enabled)
 	data.AutoLink = types.BoolValue(provider.AutoLink)
 	data.AutoOnboarding = types.BoolValue(provider.AutoOnboarding)
@@ -197,6 +199,14 @@ func (d *AuthProviderDataSource) Read(ctx context.Context, req datasource.ReadRe
 	data.ClientSecretPost = types.BoolValue(provider.ClientSecretPost)
 	data.UsePkce = types.BoolValue(provider.UsePkce)
 	data.Typ = types.StringValue(provider.Typ)
+
+	// Transform scope: API returns "openid+profile+email", normalize to "openid profile email"
+	data.Scope = types.StringValue(strings.ReplaceAll(provider.Scope, "+", " "))
+
+	data.AdminClaimPath = utils.StringPtrToFramework(provider.AdminClaimPath)
+	data.AdminClaimValue = utils.StringPtrToFramework(provider.AdminClaimValue)
+	data.MfaClaimPath = utils.StringPtrToFramework(provider.MfaClaimPath)
+	data.MfaClaimValue = utils.StringPtrToFramework(provider.MfaClaimValue)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

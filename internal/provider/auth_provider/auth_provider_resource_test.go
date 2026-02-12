@@ -26,7 +26,7 @@ func TestAccAuthProviderResource(t *testing.T) {
 					),
 					statecheck.ExpectKnownValue(
 						"rauthy_auth_provider.google",
-						tfjsonpath.New("id"),
+						tfjsonpath.New("client_id"),
 						knownvalue.StringExact("google"),
 					),
 					statecheck.ExpectKnownValue(
@@ -58,11 +58,10 @@ func TestAccAuthProviderResource(t *testing.T) {
 func testAccAuthProviderResourceConfig(id string, name string) string {
 	return fmt.Sprintf(`
 resource "rauthy_auth_provider" "google" {
-	id = %[1]q
 	name = %[2]q
 	typ = "google"
 	issuer = "https://accounts.google.com"
-	client_id = "google-client-id"
+	client_id = %[1]q
 	client_secret = "google-client-secret"
 	authorization_endpoint = "https://accounts.google.com/o/oauth2/v2/auth"
 	token_endpoint = "https://oauth2.googleapis.com/token"
