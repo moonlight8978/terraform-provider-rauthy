@@ -3,6 +3,7 @@ package auth_provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -11,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/moonlight8978/terraform-provider-rauthy/internal/provider/utils"
 	"github.com/moonlight8978/terraform-provider-rauthy/pkg/rauthy"
 )
 
@@ -60,7 +62,7 @@ func (r *AuthProviderResource) Schema(ctx context.Context, req resource.SchemaRe
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				MarkdownDescription: "Provider ID",
-				Required:            true,
+				Computed:            true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -274,10 +276,10 @@ func (r *AuthProviderResourceModel) ToApi() rauthy.AuthProvider {
 		UserinfoEndpoint:      r.UserinfoEndpoint.ValueString(),
 		JwksEndpoint:          r.JwksEndpoint.ValueString(),
 		Scope:                 r.Scope.ValueString(),
-		AdminClaimPath:        r.AdminClaimPath.ValueString(),
-		AdminClaimValue:       r.AdminClaimValue.ValueString(),
-		MfaClaimPath:          r.MfaClaimPath.ValueString(),
-		MfaClaimValue:         r.MfaClaimValue.ValueString(),
+		AdminClaimPath:        utils.FrameworkToStringPtr(r.AdminClaimPath),
+		AdminClaimValue:       utils.FrameworkToStringPtr(r.AdminClaimValue),
+		MfaClaimPath:          utils.FrameworkToStringPtr(r.MfaClaimPath),
+		MfaClaimValue:         utils.FrameworkToStringPtr(r.MfaClaimValue),
 		Enabled:               r.Enabled.ValueBool(),
 		AutoLink:              r.AutoLink.ValueBool(),
 		AutoOnboarding:        r.AutoOnboarding.ValueBool(),
@@ -298,11 +300,6 @@ func (r *AuthProviderResourceModel) FromApiResource(provider *rauthy.AuthProvide
 	r.TokenEndpoint = types.StringValue(provider.TokenEndpoint)
 	r.UserinfoEndpoint = types.StringValue(provider.UserinfoEndpoint)
 	r.JwksEndpoint = types.StringValue(provider.JwksEndpoint)
-	r.Scope = types.StringValue(provider.Scope)
-	r.AdminClaimPath = types.StringValue(provider.AdminClaimPath)
-	r.AdminClaimValue = types.StringValue(provider.AdminClaimValue)
-	r.MfaClaimPath = types.StringValue(provider.MfaClaimPath)
-	r.MfaClaimValue = types.StringValue(provider.MfaClaimValue)
 	r.Enabled = types.BoolValue(provider.Enabled)
 	r.AutoLink = types.BoolValue(provider.AutoLink)
 	r.AutoOnboarding = types.BoolValue(provider.AutoOnboarding)
@@ -310,4 +307,12 @@ func (r *AuthProviderResourceModel) FromApiResource(provider *rauthy.AuthProvide
 	r.ClientSecretPost = types.BoolValue(provider.ClientSecretPost)
 	r.UsePkce = types.BoolValue(provider.UsePkce)
 	r.Typ = types.StringValue(provider.Typ)
+
+	// Transform scope: API returns "openid+profile+email", normalize to "openid profile email"
+	r.Scope = types.StringValue(strings.ReplaceAll(provider.Scope, "+", " "))
+
+	r.AdminClaimPath = utils.StringPtrToFramework(provider.AdminClaimPath)
+	r.AdminClaimValue = utils.StringPtrToFramework(provider.AdminClaimValue)
+	r.MfaClaimPath = utils.StringPtrToFramework(provider.MfaClaimPath)
+	r.MfaClaimValue = utils.StringPtrToFramework(provider.MfaClaimValue)
 }

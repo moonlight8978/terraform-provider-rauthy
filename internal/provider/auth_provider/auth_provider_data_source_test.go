@@ -19,6 +19,7 @@ func TestAccAuthProviderDataSource(t *testing.T) {
 					resource.TestCheckResourceAttrPair("data.rauthy_auth_provider.test", "name", "rauthy_auth_provider.test", "name"),
 					resource.TestCheckResourceAttrSet("data.rauthy_auth_provider.test", "id"),
 					resource.TestCheckResourceAttr("data.rauthy_auth_provider.test", "issuer", "https://accounts.google.com"),
+					resource.TestCheckResourceAttr("data.rauthy_auth_provider.test", "client_id", "google-client-id"),
 				),
 			},
 		},
@@ -28,7 +29,6 @@ func TestAccAuthProviderDataSource(t *testing.T) {
 func testAccAuthProviderDataSourceConfig(id string, name string) string {
 	return fmt.Sprintf(`
 resource "rauthy_auth_provider" "test" {
-	id = %[1]q
 	name = %[2]q
 	typ = "google"
 	issuer = "https://accounts.google.com"

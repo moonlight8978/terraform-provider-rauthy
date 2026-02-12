@@ -6,27 +6,27 @@ import (
 )
 
 type AuthProvider struct {
-	AdminClaimPath        string `json:"admin_claim_path"`
-	AdminClaimValue       string `json:"admin_claim_value"`
-	AuthorizationEndpoint string `json:"authorization_endpoint"`
-	AutoLink              bool   `json:"auto_link"`
-	AutoOnboarding        bool   `json:"auto_onboarding"`
-	ClientId              string `json:"client_id"`
-	ClientSecret          string `json:"client_secret"`
-	ClientSecretBasic     bool   `json:"client_secret_basic"`
-	ClientSecretPost      bool   `json:"client_secret_post"`
-	Enabled               bool   `json:"enabled"`
-	Id                    string `json:"id"`
-	Issuer                string `json:"issuer"`
-	JwksEndpoint          string `json:"jwks_endpoint"`
-	MfaClaimPath          string `json:"mfa_claim_path"`
-	MfaClaimValue         string `json:"mfa_claim_value"`
-	Name                  string `json:"name"`
-	Scope                 string `json:"scope"`
-	TokenEndpoint         string `json:"token_endpoint"`
-	Typ                   string `json:"typ"`
-	UsePkce               bool   `json:"use_pkce"`
-	UserinfoEndpoint      string `json:"userinfo_endpoint"`
+	AdminClaimPath        *string `json:"admin_claim_path,omitempty"`
+	AdminClaimValue       *string `json:"admin_claim_value,omitempty"`
+	AuthorizationEndpoint string  `json:"authorization_endpoint"`
+	AutoLink              bool    `json:"auto_link"`
+	AutoOnboarding        bool    `json:"auto_onboarding"`
+	ClientId              string  `json:"client_id"`
+	ClientSecret          string  `json:"client_secret"`
+	ClientSecretBasic     bool    `json:"client_secret_basic"`
+	ClientSecretPost      bool    `json:"client_secret_post"`
+	Enabled               bool    `json:"enabled"`
+	Id                    string  `json:"id"`
+	Issuer                string  `json:"issuer"`
+	JwksEndpoint          string  `json:"jwks_endpoint,omitempty"`
+	MfaClaimPath          *string `json:"mfa_claim_path,omitempty"`
+	MfaClaimValue         *string `json:"mfa_claim_value,omitempty"`
+	Name                  string  `json:"name"`
+	Scope                 string  `json:"scope"`
+	TokenEndpoint         string  `json:"token_endpoint"`
+	Typ                   string  `json:"typ"`
+	UsePkce               bool    `json:"use_pkce"`
+	UserinfoEndpoint      string  `json:"userinfo_endpoint"`
 }
 
 func (c *Client) CreateAuthProvider(ctx context.Context, provider *AuthProvider) (*AuthProvider, error) {
@@ -42,7 +42,7 @@ func (c *Client) CreateAuthProvider(ctx context.Context, provider *AuthProvider)
 
 func (c *Client) GetAuthProvider(ctx context.Context, id string) (*AuthProvider, error) {
 	var providers []AuthProvider
-	_, err := c.Request(ctx, "GET", "/providers", nil, &providers)
+	_, err := c.Request(ctx, "POST", "/providers", nil, &providers)
 
 	if err != nil {
 		return nil, err
