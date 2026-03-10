@@ -76,7 +76,7 @@ func TestGetAuthProvider_NotFound(t *testing.T) {
 }
 
 func TestUpdateAuthProvider(t *testing.T) {
-	ts := CreateServer(oidcProviderResponse, http.StatusOK)
+	ts := CreateServer("", http.StatusOK)
 	defer ts.Close()
 
 	client := rauthy.NewClient(ts.URL, false, rauthy.NewApiKeyAuthenticator("supersecret"))
@@ -86,10 +86,8 @@ func TestUpdateAuthProvider(t *testing.T) {
 		Name: "Google Updated",
 	}
 
-	provider, err := client.UpdateAuthProvider(context.Background(), "google", p)
+	err := client.UpdateAuthProvider(context.Background(), "google", p)
 	assert.Nil(t, err)
-	// The mock response has Name="Google", so this confirms the response is parsed correctly.
-	assert.Equal(t, "Google", provider.Name)
 }
 
 func TestDeleteAuthProvider(t *testing.T) {
