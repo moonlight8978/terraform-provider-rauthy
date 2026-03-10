@@ -64,15 +64,14 @@ func (c *Client) GetAuthProvider(ctx context.Context, id string) (*AuthProvider,
 	return &provider, nil
 }
 
-func (c *Client) UpdateAuthProvider(ctx context.Context, id string, provider *AuthProvider) (*AuthProvider, error) {
-	var updatedProvider AuthProvider
-	_, err := c.Request(ctx, "PUT", fmt.Sprintf("/providers/%s", id), &provider, &updatedProvider)
+func (c *Client) UpdateAuthProvider(ctx context.Context, id string, provider *AuthProvider) error {
+	_, err := c.Request(ctx, "PUT", fmt.Sprintf("/providers/%s", id), &provider, nil)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &updatedProvider, nil
+	return nil
 }
 
 func (c *Client) DeleteAuthProvider(ctx context.Context, id string) error {

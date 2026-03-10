@@ -234,13 +234,11 @@ func (r *AuthProviderResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 
 	apiModel := data.ToApi()
-	provider, err := r.client.UpdateAuthProvider(ctx, data.Id.ValueString(), &apiModel)
+	err := r.client.UpdateAuthProvider(ctx, data.Id.ValueString(), &apiModel)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update OIDC provider, got error: %s", err))
 		return
 	}
-
-	data.FromApiResource(provider)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
