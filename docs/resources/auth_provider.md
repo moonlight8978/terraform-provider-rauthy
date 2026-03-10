@@ -14,7 +14,6 @@ OIDC Provider resource
 
 ```terraform
 resource "rauthy_auth_provider" "default" {
-  id                     = "google"
   name                   = "Google"
   typ                    = "google"
   issuer                 = "https://accounts.google.com"
@@ -23,9 +22,13 @@ resource "rauthy_auth_provider" "default" {
   authorization_endpoint = "https://accounts.google.com/o/oauth2/v2/auth"
   token_endpoint         = "https://oauth2.googleapis.com/token"
   userinfo_endpoint      = "https://openidconnect.googleapis.com/v1/userinfo"
-  jwks_endpoint          = "https://www.googleapis.com/oauth2/v3/certs"
   scope                  = "openid profile email"
-  enabled                = true
+  use_pkce               = true
+
+  auto_link       = true
+  auto_onboarding = false
+
+  enabled = true
 }
 ```
 

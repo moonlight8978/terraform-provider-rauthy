@@ -272,7 +272,7 @@ func (r *AuthProviderResourceModel) ToApi() rauthy.AuthProvider {
 		AuthorizationEndpoint: r.AuthorizationEndpoint.ValueString(),
 		TokenEndpoint:         r.TokenEndpoint.ValueString(),
 		UserinfoEndpoint:      r.UserinfoEndpoint.ValueString(),
-		JwksEndpoint:          r.JwksEndpoint.ValueString(),
+		JwksEndpoint:          utils.FrameworkToStringPtr(r.JwksEndpoint),
 		Scope:                 r.Scope.ValueString(),
 		AdminClaimPath:        utils.FrameworkToStringPtr(r.AdminClaimPath),
 		AdminClaimValue:       utils.FrameworkToStringPtr(r.AdminClaimValue),
@@ -297,7 +297,7 @@ func (r *AuthProviderResourceModel) FromApiResource(provider *rauthy.AuthProvide
 	r.AuthorizationEndpoint = types.StringValue(provider.AuthorizationEndpoint)
 	r.TokenEndpoint = types.StringValue(provider.TokenEndpoint)
 	r.UserinfoEndpoint = types.StringValue(provider.UserinfoEndpoint)
-	r.JwksEndpoint = types.StringValue(provider.JwksEndpoint)
+	r.JwksEndpoint = utils.StringPtrToFramework(provider.JwksEndpoint)
 	r.Enabled = types.BoolValue(provider.Enabled)
 	r.AutoLink = types.BoolValue(provider.AutoLink)
 	r.AutoOnboarding = types.BoolValue(provider.AutoOnboarding)
