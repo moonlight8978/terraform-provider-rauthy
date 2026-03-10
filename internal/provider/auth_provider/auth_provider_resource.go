@@ -64,7 +64,7 @@ func (r *AuthProviderResource) Schema(ctx context.Context, req resource.SchemaRe
 				MarkdownDescription: "Provider ID",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"name": schema.StringAttribute{

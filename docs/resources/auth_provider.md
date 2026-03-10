@@ -13,7 +13,7 @@ OIDC Provider resource
 ## Example Usage
 
 ```terraform
-resource "rauthy_provider" "default" {
+resource "rauthy_auth_provider" "default" {
   id                     = "google"
   name                   = "Google"
   typ                    = "google"
