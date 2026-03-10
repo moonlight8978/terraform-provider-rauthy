@@ -34,3 +34,5 @@ go.work.sum
 # AI
 .agent/skills/*
 !.agent/skills/terraform-provider-contributor
+
+dist/
