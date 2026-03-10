@@ -4,6 +4,11 @@ tasks:
     cmds:
       - go install
       - go mod tidy
+      - task: tools:prepare
+
+  tools:prepare:
+    dir: tools
+    cmd: go mod tidy
 
   up:
     cmd: devcontainer up --workspace-folder .
