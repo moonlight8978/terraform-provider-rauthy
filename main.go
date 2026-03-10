@@ -1,4 +1,4 @@
-package terraformproviderrauthy
+package main
 
 import (
 	"context"
