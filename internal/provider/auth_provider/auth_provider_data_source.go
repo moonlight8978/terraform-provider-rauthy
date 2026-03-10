@@ -191,7 +191,7 @@ func (d *AuthProviderDataSource) Read(ctx context.Context, req datasource.ReadRe
 	data.AuthorizationEndpoint = types.StringValue(provider.AuthorizationEndpoint)
 	data.TokenEndpoint = types.StringValue(provider.TokenEndpoint)
 	data.UserinfoEndpoint = types.StringValue(provider.UserinfoEndpoint)
-	data.JwksEndpoint = types.StringValue(provider.JwksEndpoint)
+	data.JwksEndpoint = utils.StringPtrToFramework(provider.JwksEndpoint)
 	data.Enabled = types.BoolValue(provider.Enabled)
 	data.AutoLink = types.BoolValue(provider.AutoLink)
 	data.AutoOnboarding = types.BoolValue(provider.AutoOnboarding)

@@ -18,7 +18,7 @@ type AuthProvider struct {
 	Enabled               bool    `json:"enabled"`
 	Id                    string  `json:"id"`
 	Issuer                string  `json:"issuer"`
-	JwksEndpoint          string  `json:"jwks_endpoint,omitempty"`
+	JwksEndpoint          *string `json:"jwks_endpoint,omitempty"`
 	MfaClaimPath          *string `json:"mfa_claim_path,omitempty"`
 	MfaClaimValue         *string `json:"mfa_claim_value,omitempty"`
 	Name                  string  `json:"name"`
