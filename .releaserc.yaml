@@ -1,0 +1,78 @@
+repositoryUrl: https://github.com/moonlight8978/terraform-provider-authy
+
+branches:
+  - main
+
+plugins:
+  - - "@semantic-release/commit-analyzer"
+    - preset: conventionalcommits
+      releaseRules:
+        - type: feat
+          release: minor
+
+        - type: fix
+          release: patch
+
+        - type: perf
+          release: patch
+
+        - type: refactor
+          release: patch
+
+        - type: chore
+          scope: deps
+          release: patch
+
+        - type: docs
+          release: patch
+
+        - scope: skip-release
+          release: false
+
+  - - "@semantic-release/release-notes-generator"
+    - preset: conventionalcommits
+      presetConfig:
+        types:
+          - type: feat
+            section: Features
+
+          - type: fix
+            section: Bug Fixes
+
+          - type: perf
+            section: Performance Improvements
+
+          - type: refactor
+            section: Code Refactoring
+
+          - type: chore
+            scope: deps
+            section: Dependencies
+
+          - type: docs
+            section: Documentation
+            hidden: true
+
+          - type: build
+            section: Build System
+            hidden: true
+
+          - type: ci
+            section: CI/CD
+            hidden: true
+
+          - type: chore
+            section: Chores
+            hidden: true
+
+  - - "@semantic-release/changelog"
+
+  - - "@semantic-release/git"
+    - message: "chore(skip-release): release ${nextRelease.version}"
+      assets:
+        - CHANGELOG.md
+        - docs/*
+
+  - - "@semantic-release/exec"
+    - publishCmd: |
+        echo "${nextRelease.notes}" > /tmp/release-notes.md
